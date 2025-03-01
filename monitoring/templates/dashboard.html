@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Network Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Real-Time Network Monitoring</h1>
+    <canvas id="latencyChart"></canvas>
+
+    <script>
+        const ws = new WebSocket("ws://127.0.0.1:8000/ws/monitoring/");
+
+        ws.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            const timestamps = data.logs.map(log => log.timestamp);
+            const latencies = data.logs.map(log => log.latency);
+
+            new Chart(document.getElementById('latencyChart'), {
+                type: 'line',
+                data: {
+                    labels: timestamps,
+                    datasets: [{ label: 'Latency (ms)', data: latencies, borderColor: 'red', borderWidth: 1 }]
+                }
+            });
+        };
+    </script>
+</body>
+</html>
+
