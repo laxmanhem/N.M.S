@@ -4,6 +4,9 @@ import socket
 import random
 from scapy.all import sniff, IP
 from .models import NetworkLog
+from celery import shared_task
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 @shared_task
 def start_sniffing():
@@ -45,3 +48,20 @@ def check_anomalies():
             ["admin@example.com"],
             fail_silently=False,
         )
+
+@shared_task
+def capture_packets():
+    def process_packet(packet):
+        if IP in packet:
+            packet_info = {
+                "src": packet[IP].src,
+                "dst": packet[IP].dst,
+                "protocol": packet[IP].proto,
+                "length": len(packet)
+            }
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                "network_packets",
+                {"type": "send_packet", "data": packet_info}
+            )
+    sniff(prn=process_packet, store=False, count=100)

@@ -28,3 +28,87 @@
 </body>
 </html>
 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Monitoring Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        canvas { width: 100% !important; height: auto !important; }
+    </style>
+</head>
+<body>
+    <h1>Live Network Traffic</h1>
+    <canvas id="packetChart"></canvas>
+
+    <script>
+        var ctx = document.getElementById('packetChart').getContext('2d');
+        var packetChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Packet Count',
+                    borderColor: 'rgb(255, 99, 132)',
+                    data: [],
+                }]
+            }
+        });
+
+        var socket = new WebSocket("ws://127.0.0.1:8000/ws/packets/");
+
+        socket.onmessage = function(event) {
+            var data = JSON.parse(event.data);
+            packetChart.data.labels.push(new Date().toLocaleTimeString());
+            packetChart.data.datasets[0].data.push(data.length);
+            packetChart.update();
+        };
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Monitoring Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        canvas { width: 100% !important; height: auto !important; }
+    </style>
+</head>
+<body>
+    <h1>Live Network Traffic</h1>
+    <canvas id="packetChart"></canvas>
+
+    <script>
+        var ctx = document.getElementById('packetChart').getContext('2d');
+        var packetChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Packet Count',
+                    borderColor: 'rgb(255, 99, 132)',
+                    data: [],
+                }]
+            }
+        });
+
+        var socket = new WebSocket("ws://127.0.0.1:8000/ws/packets/");
+
+        socket.onmessage = function(event) {
+            var data = JSON.parse(event.data);
+            packetChart.data.labels.push(new Date().toLocaleTimeString());
+            packetChart.data.datasets[0].data.push(data.length);
+            packetChart.update();
+        };
+    </script>
+</body>
+</html>
+

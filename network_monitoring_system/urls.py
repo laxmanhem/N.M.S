@@ -16,14 +16,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.shortcuts import redirect
-from . import views
+from django.urls import path
+from django.views.generic import RedirectView
 
 urlpatterns = [
+    path('', RedirectView.as_view(url='/monitoring/dashboard/')),  # Redirect root to dashboard
     path('admin/', admin.site.urls),
-    path('api/monitoring/', include('monitoring.urls')),
-    path('logs/', get_network_logs, name='logs'),
+    path('monitoring/', include('monitoring.urls')),
 
+    path('monitoring/dashboard/', include('monitoring.urls')),
+    path('monitoring/export-pdf/', include('monitoring.urls')),
+    path('monitoring/logs/', include('monitoring.urls')),  # No space in 'monitoring.urls'
 
-    path('', lambda request: redirect('api/monitoring/')),  # Redirect to your monitoring API or another page
 ]

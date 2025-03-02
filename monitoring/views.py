@@ -5,6 +5,21 @@ from .models import NetworkLog
 from .serializers import NetworkLogSerializer
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+def home(request):
+    return HttpResponse("Welcome to the Network Monitoring System!")
+
+@csrf_exempt
+def trigger_sniffer(request):
+    from monitoring.tasks import capture_packets
+    capture_packets.delay()
+    return JsonResponse({"status": "Packet capture started."})
+
+def dashboard(request):
+    return render(request, "monitoring/dashboard.html")
 
 def monitoring_home(request):
     return HttpResponse("Welcome to the Network Monitoring Home")
@@ -38,3 +53,4 @@ def generate_pdf_report(request):
 
     p.save()
     return response
+
